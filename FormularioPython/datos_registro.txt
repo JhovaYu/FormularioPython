@@ -1,0 +1,6 @@
+Nombre: ghff
+Apellido: fghf
+Teléfono: 456546
+Edad: 53
+Estatura: 543
+Género: Hombre

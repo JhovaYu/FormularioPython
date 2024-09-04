@@ -1,21 +1,27 @@
+import tkinter as tk
 from cgitb import text
 from logging import root
-import tkinter as tk
 from tokenize import String
 from turtle import width
-from tkinter import Canvas, messagebox
+from tkinter import Canvas, messagebox, filedialog
 
 nombre = ""
 apellido = ""
 edad = ""
 estatura = ""
 telefono = ""
+width = 600
+height = 750
+
+
 
 def limpiar_campos():
-    tb_nombre.delete(0,tk.End)
-    tb_apelllido.delete(0,tk.End)
-    tb_edad.delete(0,tk.End)
-    tb_telefono.delete(0,tk.End)
+    tb_nombre.delete(0, tk.END)
+    tb_apelllido.delete(0, tk.END)
+    tb_telefono.delete(0, tk.END)
+    tb_edad.delete(0, tk.END)
+    tb_estatura.delete(0, tk.END)
+    genero_var.set(None)
     
 def borrar_fun():
     limpiar_campos()
@@ -26,8 +32,23 @@ def get_entry_values():
     edad = tb_edad.get()
     estatura = tb_estatura.get()
     telefono = tb_telefono.get()
+    genero = genero_var.get()
 
-    messagebox.showinfo("Informacion", "Datos Guardados con exito: \n\n" + datos)
+    ruta_archivo =  filedialog.asksaveasfilename(defaultextension=".txt", 
+                                                filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")],
+                                                title="Guardar archivo")
+    
+    if ruta_archivo:
+
+        with open(ruta_archivo, "w") as archivo:
+            archivo.write(f"Nombre: {nombre}\n")
+            archivo.write(f"Apellido: {apellido}\n")
+            archivo.write(f"Teléfono: {telefono}\n")
+            archivo.write(f"Edad: {edad}\n")
+            archivo.write(f"Estatura: {estatura}\n")
+            archivo.write(f"Género: {genero}\n")
+
+        messagebox.showinfo("Datos guardados", f"Los datos han sido guardados exitosamente en {ruta_archivo}.")
     
     #Cambiar el valor de un label
     #lb_apellido.config(text=nombre)
@@ -43,67 +64,92 @@ def crear_degradado(canvas, color1, color2):
                 f'{int(color1[3:5], 16) + (int(color2[3:5], 16) - int(color1[3:5], 16)) * i // ancho:02x}' \
                 f'{int(color1[5:7], 16) + (int(color2[5:7], 16) - int(color1[5:7], 16)) * i // ancho:02x}'
         canvas.create_line(i, 0, i, alto, fill=color)
+        
+# Obtener el tamaño de la pantalla
+#screen_width = root.winfo_screenwidth()
+#screen_height = root.winfo_screenheight()
+
+# Calcular la posición x, y
+#x = (screen_width // 2) - (width // 2)
+#y = (screen_height // 2) - (height // 2)
 
 root = tk.Tk()
-root.geometry("500x900")
+root.geometry(f"{width}x{height}")
 root.title("Formulario")
 
-canvas = tk.Canvas(root, width=500, height=900)
-canvas.pack(fill="both", expand=True, ipady= 40, ipadx=40)
+canvas = tk.Canvas(root, width=width, height=height)
+canvas.pack(fill="both", expand=True)
 
 canvas.bind("<Configure>", lambda e: crear_degradado(canvas, "#FF5733", "#33FF57"))
 
-p1 = tk.Frame(canvas, bg="#874638", width = 400, height = 800)
-p1.pack(fill = "both", expand = False, ipady= 40, ipadx=40)
+p1 = tk.Frame(canvas, bg="#FFFAFA", width=400, height=650)
+canvas.create_window(300, 380, window=p1)
 
-lb_nombre = tk.Label(p1, text = "Hola")
-lb_nombre.place(x=30, y=20)
+#Titulo
+lb_registro = tk.Label(p1,text= "REGISTRO", font=("Arial", 24))
+lb_registro.place(x=120, y=10)
 
+#Nombre
+lb_nombre = tk.Label(p1, text = "Nombre")
+lb_nombre.place(x=30, y=70)
+
+#Nombre
 tb_nombre = tk.Entry(p1)
-tb_nombre.place(x= 100, y=20)
+tb_nombre.place(x=100, y=70)
 
+
+#Apellido
 lb_apellido = tk.Label(p1, text = "Apellido")
-lb_apellido.place(x=30, y=60)
+lb_apellido.place(x=30, y=100)
 
 tb_apelllido = tk.Entry(p1)
-tb_apelllido.place(x = 100, y = 60)
+tb_apelllido.place(x = 100, y = 100)
 
+#Telefono
 lb_telefono = tk.Label(p1, text = "Telefono")
-lb_telefono.place(x = 30, y = 100)
+lb_telefono.place(x = 30, y = 140)
 
 tb_telefono = tk.Entry(p1)
-tb_telefono.place(x = 100, y = 100)
+tb_telefono.place(x = 100, y = 140)
 
+#Edad
 lb_edad = tk.Label(p1, text=("Edad"))
-lb_edad.place(x = 30, y = 140)
+lb_edad.place(x = 30, y = 180)
 
 tb_edad = tk.Entry(p1)
-tb_edad.place(x = 100, y = 140 )
+tb_edad.place(x = 100, y = 180 )
 
+#Estatura
 lb_estatura = tk.Label(p1, text="Estatura")
-lb_estatura.place(x = 30, y = 180)
+lb_estatura.place(x = 30, y = 220)
 
 tb_estatura = tk.Entry(p1)
-tb_estatura.place(x = 100, y = 180)
+tb_estatura.place(x = 100, y = 220)
 
+#Genero
 lb_genero = tk.Label(p1, text="Genero")
-lb_genero.place(x = 30, y = 220)
+lb_genero.place(x = 30, y = 260)
 
-rb_genero_hombre = tk.Radiobutton()
-rb_genero_hombre.place(x = 90, y = 220 )
+genero_var = tk.StringVar()
+genero_var.set(None)
 
-rb_genero_mujer = tk.Radiobutton()
-rb_genero_mujer.place(x = 140, y = 220)
+#RadionButton Hombre
+rb_genero_hombre = tk.Radiobutton(p1, text="Hombre", variable=genero_var, value="Hombre")
+rb_genero_hombre.place(x = 90, y = 260 )
 
+
+#RadioButton Mujer
+rb_genero_mujer = tk.Radiobutton(p1, text="Mujer", variable=genero_var, value="Mujer")
+rb_genero_mujer.place(x = 190, y = 260)
+
+#Boton Aceptar
 btn_aceptar = tk.Button(p1, text=("Aceptar"), command=get_entry_values)
-btn_aceptar.place(x = 150, y = 280)
+btn_aceptar.place(x = 80, y = 300)
 
+#Boton Cancelar
+btn_aceptar = tk.Button(p1, text=("Cancelar"), command=limpiar_campos)
+btn_aceptar.place(x = 260, y = 300)
 
-
-
-
-datos = "Nombres" + nombre  +  "\n" + "Apellidos" + apellido + "\n" + "Edad" + edad + "anos\n" + "Estatura" + estatura + "\n" + "Telefonos: " +  telefono + "\n"
-#+ "Genero" + genero + "\n"
 
 
 root.mainloop()
