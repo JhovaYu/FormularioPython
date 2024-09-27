@@ -4,6 +4,7 @@ from logging import root
 from tokenize import String
 from turtle import width
 from tkinter import Canvas, messagebox, filedialog
+from tkinter import messagebox
 
 nombre = ""
 apellido = ""
@@ -13,7 +14,23 @@ telefono = ""
 width = 600
 height = 750
 
+def detectar_DifLetras(event):
+    tecla = event.keysym
 
+    if tecla.isalpha() or tecla == 'space' or tecla == 'BackSpace':
+        return
+    else:
+        messagebox.showwarning("Advertencia", "Solo se permiten letras")
+        return "break"
+
+def detectar_DifNumeros(event):
+    tecla = event.keysym
+
+    if tecla.isdigit() or tecla == 'space' or tecla == 'BackSpace':
+        return
+    else:
+        messagebox.showwarning("Advertencia", "Solo se permiten numeros")
+        return "break"
 
 def limpiar_campos():
     tb_nombre.delete(0, tk.END)
@@ -88,7 +105,7 @@ canvas.create_window(300, 380, window=p1)
 #Titulo
 lb_registro = tk.Label(p1,text= "REGISTRO", font=("Arial", 24))
 lb_registro.place(x=120, y=10)
-
+    
 #Nombre
 lb_nombre = tk.Label(p1, text = "Nombre")
 lb_nombre.place(x=30, y=70)
@@ -96,6 +113,8 @@ lb_nombre.place(x=30, y=70)
 #Nombre
 tb_nombre = tk.Entry(p1)
 tb_nombre.place(x=100, y=70)
+
+tb_nombre.bind("<Key>", detectar_DifLetras)
 
 
 #Apellido
@@ -105,12 +124,16 @@ lb_apellido.place(x=30, y=100)
 tb_apelllido = tk.Entry(p1)
 tb_apelllido.place(x = 100, y = 100)
 
+tb_apelllido.bind("<Key>", detectar_DifLetras)
+
 #Telefono
 lb_telefono = tk.Label(p1, text = "Telefono")
 lb_telefono.place(x = 30, y = 140)
 
 tb_telefono = tk.Entry(p1)
 tb_telefono.place(x = 100, y = 140)
+
+tb_telefono.bind("<Key>", detectar_DifNumeros)
 
 #Edad
 lb_edad = tk.Label(p1, text=("Edad"))
@@ -119,12 +142,16 @@ lb_edad.place(x = 30, y = 180)
 tb_edad = tk.Entry(p1)
 tb_edad.place(x = 100, y = 180 )
 
+tb_edad.bind("<Key>", detectar_DifNumeros)
+
 #Estatura
 lb_estatura = tk.Label(p1, text="Estatura")
 lb_estatura.place(x = 30, y = 220)
 
 tb_estatura = tk.Entry(p1)
 tb_estatura.place(x = 100, y = 220)
+
+tb_estatura.bind("<Key>", detectar_DifNumeros)
 
 #Genero
 lb_genero = tk.Label(p1, text="Genero")
