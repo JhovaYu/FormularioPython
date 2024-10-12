@@ -1,10 +1,13 @@
 import tkinter as tk
+import mysql.connector 
+import re
+from mysql.connector import Error
 from cgitb import text
 from logging import root
 from tokenize import String
 from turtle import width
 from tkinter import Canvas, messagebox, filedialog
-from tkinter import messagebox
+from tkinter import messagebox, Tk, Entry, Toplevel
 
 nombre = ""
 apellido = ""
@@ -14,6 +17,45 @@ telefono = ""
 width = 600
 height = 750
 
+def conectar_bd():
+    try:
+        conexion = mysql.connector.connect(
+
+
+
+            host = "localhost",
+            user = "root",
+            password = "#Sincodigo1",
+            database = "programacionavanzada"
+        )
+        return conexion
+    except Error as e:
+        print(f"Error al conectar a la base de datos: {e}")
+
+conexion = conectar_bd()
+
+def insertar_datos(conexion, nombre, apellidos, telefono, edad, estatura, genero):
+    try:
+        cursor = conexion.cursor()
+        query = "INSERT INTO registros (nombre, apellidos, telefono, edad, estatura, genero) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (nombre, apellidos, telefono, edad, estatura, genero)
+        cursor.execute(query, values)
+        conexion.commit()
+        show_message_box()
+        print("Datos guardadas con exito")
+    except Error as e:
+        print(f"Error al insertar datos: {e}")
+
+
+
+def cerrar_conexion():
+    conexion.close()
+
+
+def validar_numero(input):
+    pattern = r"^\d{0,10}$"
+    return bool(re.match(pattern, input))
+
 def detectar_DifLetras(event):
     tecla = event.keysym
 
@@ -21,7 +63,7 @@ def detectar_DifLetras(event):
         return
     else:
         messagebox.showwarning("Advertencia", "Solo se permiten letras")
-        return "break"
+        
 
 def detectar_DifNumeros(event):
     tecla = event.keysym
@@ -39,6 +81,7 @@ def limpiar_campos():
     tb_edad.delete(0, tk.END)
     tb_estatura.delete(0, tk.END)
     genero_var.set(None)
+
     
 def borrar_fun():
     limpiar_campos()
@@ -51,7 +94,11 @@ def get_entry_values():
     telefono = tb_telefono.get()
     genero = genero_var.get()
 
-    ruta_archivo =  filedialog.asksaveasfilename(defaultextension=".txt", 
+    insertar_datos(conexion, nombre, apellido, telefono, edad, estatura, genero)
+
+
+
+    """ ruta_archivo =  filedialog.asksaveasfilename(defaultextension=".txt", 
                                                 filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")],
                                                 title="Guardar archivo")
     
@@ -66,12 +113,12 @@ def get_entry_values():
             archivo.write(f"Género: {genero}\n")
 
         messagebox.showinfo("Datos guardados", f"Los datos han sido guardados exitosamente en {ruta_archivo}.")
-    
+     """
     #Cambiar el valor de un label
     #lb_apellido.config(text=nombre)
     
 def show_message_box():
-    messagebox.showinfo("Informacion", "Datos Guardados con exito: \n\n" + datos)
+    messagebox.showinfo("Informacion", "Datos Guardados con exito \n\n" )
 
 def crear_degradado(canvas, color1, color2):
     ancho = canvas.winfo_width()
@@ -133,6 +180,8 @@ lb_telefono.place(x = 30, y = 140)
 tb_telefono = tk.Entry(p1)
 tb_telefono.place(x = 100, y = 140)
 
+tb_telefono.config(validate="key", validatecommand=(p1.register(validar_numero), "%P"))
+
 tb_telefono.bind("<Key>", detectar_DifNumeros)
 
 #Edad
@@ -170,12 +219,12 @@ rb_genero_mujer = tk.Radiobutton(p1, text="Mujer", variable=genero_var, value="M
 rb_genero_mujer.place(x = 190, y = 260)
 
 #Boton Aceptar
-btn_aceptar = tk.Button(p1, text=("Aceptar"), command=get_entry_values)
-btn_aceptar.place(x = 80, y = 300)
+btn_guardar = tk.Button(p1, text=("Guardar"), command=get_entry_values)
+btn_guardar.place(x = 80, y = 300)
 
 #Boton Cancelar
-btn_aceptar = tk.Button(p1, text=("Cancelar"), command=limpiar_campos)
-btn_aceptar.place(x = 260, y = 300)
+btn_cancelar = tk.Button(p1, text=("Cancelar"), command=limpiar_campos)
+btn_cancelar.place(x = 260, y = 300)
 
 
 
